@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sports Office Login</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    height:100vh;
+}
+
+/* MAIN BACKGROUND */
+.wrapper{
+    height:100vh;
+    background:
+        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        url("scc4.jpg");
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    align-items:center;
+    padding:100px;
+    color:white;
+}
+
+/* LEFT CONTENT */
+.left{
+    max-width:520px;
+}
+
+.left h1{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size:44px;
+    margin-bottom:15px;
+}
+
+.left h1 span{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color:#fbbf24;
+}
+
+.left h3{
+    font-size:20px;
+    margin-bottom:20px;
+}
+
+.left p{
+    font-size:15px;
+    line-height:1.6;
+    opacity:0.9;
+}
+
+/* GLASS LOGIN CARD */
+.login-card{
+    margin-left:clamp(40px, 10vw, 160px);
+    width:360px;
+    padding:40px;
+    border-radius:16px;
+
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+    border:1px solid rgba(255,255,255,0.3);
+    box-shadow:0 20px 40px rgba(0,0,0,0.35);
+
+    color:white;
+}
+
+/* LOGIN TEXT */
+.login-card h2{
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.login-card small{
+    display:block;
+    margin-bottom:25px;
+    opacity:0.85;
+}
+
+/* INPUTS */
+.field{
+    margin-bottom:18px;
+}
+
+.field label{
+    display:block;
+    margin-bottom:5px;
+    font-size:14px;
+}
+
+.field input{
+    width:100%;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,0.4);
+    background:rgba(255,255,255,0.18);
+    color:white;
+    outline:none;
+}
+
+.field input::placeholder{
+    color:rgba(255,255,255,0.7);
+}
+
+/* OPTIONS */
+.options{
+    display:flex;
+    align-items:center;
+    font-size:13px;
+    margin-bottom:20px;
+}
+
+.options input{
+    margin-right:8px;
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:11px;
+    background:#0f766e;
+    border:none;
+    color:white;
+    font-size:15px;
+    border-radius:25px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#115e59;
+}
+
+/* LINKS */
+.links{
+    margin-top:15px;
+    font-size:13px;
+}
+
+.links a{
+    display:block;
+    color:#fbbf24;
+    text-decoration:none;
+    margin-top:5px;
+}
+
+#error{
+    margin-top:10px;
+    color:#ffb4b4;
+    font-size:13px;
+    text-align:center;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+    .wrapper{
+        flex-direction:column;
+        padding:40px;
+        text-align:center;
+    }
+
+    .login-card{
+        margin:40px 0 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <!-- LEFT CONTENT -->
+    <div class="left">
+        <h1>Southern Christian <span>College</span></h1>
+        <h3>Sports Office Equipment Borrowing System</h3>
+        <p>
+            A secure system designed to manage sports equipment,
+            track borrowing records, and support student athletic
+            activities efficiently.
+        </p>
+    </div>
+
+    <!-- LOGIN CARD -->
+    <div class="login-card">
+        <h2>Log in</h2>
+        <small>Authorized Personnel Only</small>
+
+        <form id="loginForm">
+            <div class="field">
+                <label>Username</label>
+                <input type="text" id="username" required>
+            </div>
+
+            <div class="field">
+                <label>Password</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <div class="options">
+                <input type="checkbox">
+                <span>Keep me logged in</span>
+            </div>
+
+            <button type="submit">Log in</button>
+            <p id="error"></p>
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const u = username.value;
+    const p = password.value;
+
+    if(u === "admin" && p === "1234"){
+        window.location.href = "dashboard.html";
+    }else{
+        error.textContent = "Invalid username or password";
+    }
+});
+</script>
+
+</body>
+</html>

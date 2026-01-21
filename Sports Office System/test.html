@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sports Equipment Borrowing System</title>
+    <style>
+      .top-header {
+        height: 55px;
+        background: #ffffff;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+      }
+      .top-header h2 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #203a43;
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 13px;
+      }
+      .theme-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #555;
+      }
+      body {
+        margin: 0;
+        font-family: Segoe UI;
+        background: #f7fafc;
+      }
+      .container {
+        display: flex;
+        height: 100vh;
+      }
+      .sidebar {
+        width: 230px;
+        background: #0f172a;
+        color: white;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 8px;
+        border: rgb(42, 42, 104);
+        background: #142346;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .main {
+        flex: 1;
+        padding: 20px;
+        overflow: auto;
+        position: relative;
+      } /* MODE TOGGLE */
+      .mode-toggle {
+        background-origin: padding-box;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: border-box;
+        border: blanchedalmond;
+        cursor: pointer; /* smaller & cleaner */
+        font-size: 16px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: #334155;
+      }
+      .mode-toggle:hover {
+        background: rgba(0, 0, 0, 0.08);
+      } /* LOGOUT */
+      .logout {
+        margin-top: auto;
+        background: #dc2626;
+        font-size: 12px;
+        padding: 6px;
+      } /* UI */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .card,
+      .section {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+      }
+      .card {
+        text-align: center;
+        font-weight: bold;
+      }
+      .hidden {
+        display: none;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 6px;
+        margin-bottom: 8px;
+      } /* BUTTONS */
+      button.action {
+        background: #22c55e;
+        border: none;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button.return {
+        background: #f97316;
+      }
+      button.print {
+        background: #2563eb;
+      }
+      button.filter {
+        background: #0ea5e9;
+      }
+      button.reset {
+        background: #64748b;
+      } /* STATUS */
+      .borrowed {
+        color: #f59e0b;
+        font-weight: bold;
+      }
+      .returned {
+        color: #22c55e;
+        font-weight: bold;
+      }
+      .overdue {
+        color: #dc2626;
+        font-weight: bold;
+      } /* DARK MODE */
+      body.dark {
+        background: #020617;
+        color: white;
+      }
+      body.dark .sidebar {
+        background: #020617;
+      }
+      body.dark .card,
+      body.dark .section,
+      body.dark table {
+        background: #020617;
+        color: white;
+      }
+      body.dark th,
+      body.dark td {
+        border-color: #1e293b;
+      }
+      body.dark {
+        background: #121212;
+        color: white;
+      }
+      body.dark .top-header {
+        background: #1e1e1e;
+        border-color: #333;
+      }
+      body.dark h2 {
+        color: white;
+      }
+      .inventory-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .inventory-header h2 {
+        margin: 0;
+        font-size: 35px;
+      }
+      .inventory-header p {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: #64748b;
+      }
+      .inventory-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .inventory-actions input {
+        width: 220px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid #cbd5f5;
+      }
+      .add-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .table-box {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        outline-color: gray;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        background: #f8fafc;
+        text-align: center;
+        font-size: 13px;
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+      }
+      .badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+      }
+      .badge.good {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .badge.new {
+        background: #ecfeff;
+        color: #155e75;
+      }
+      .badge.fair {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge.bad {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .actions i {
+        cursor: pointer;
+        margin-right: 10px;
+        color: #64748b;
+      }
+      .actions i:hover {
+        color: #2563eb;
+      } /* BORROWING PAGE (PHOTO STYLE) */
+      .borrow-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .borrow-header h2 {
+        font-size: 35px;
+        margin: 0;
+      }
+      .borrow-header p {
+        margin: 4px 0 0;
+        font-size: 14px;
+        color: #64748b;
+      }
+      .borrow-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .borrow-actions input {
+        width: 240px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 13px;
+      }
+      .borrow-actions button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 9px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .borrow-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      } /* STATUS PILLS */
+      .status-pill {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+      }
+      .status-active {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .status-overdue {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+    </style>
+  </head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+  <body>
+    <header class="top-header">
+      <h2>Sports Equipment Borrowing System</h2>
+      <div class="header-right">
+        <span id="currentDate"></span>
+        <button
+          class="theme-toggle"
+          onclick="toggleTheme()"
+          title="Toggle Theme"
+        >
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+    </header>
+    <div class="container">
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div
+          class="hidden"
+          id="todayDate"
+          style="margin-bottom: 10px; font-size: 14px; color: white"
+        ></div>
+        <h2>SCC Sports Office</h2>
+        <button onclick="show('dashboard')">Dashboard</button>
+        <button onclick="show('equipment')">Equipment</button>
+        <button onclick="show('borrow')">Borrow</button>
+        <button onclick="show('reports')">Reports</button>
+        <button class="logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+      <!-- MAIN -->
+      <div class="main">
+        <button class="mode-toggle" onclick="toggleMode()"></button>
+        <!-- DASHBOARD -->
+        <div id="dashboard">
+          <div class="stats">
+            <div class="card">
+              TOTAL <i class="fas fa-box"></i> <br /><span id="total">0</span>
+            </div>
+            <div class="card">
+              BORROWED <i class="fas fa-clipboard-list"></i> <br /><span
+                id="borrowed"
+                >0</span
+              >
+            </div>
+            <div class="card">
+              AVAILABLE <i class="fas fa-clipboard-check"></i> <br /><span
+                id="available"
+                >0</span
+              >
+            </div>
+            <div class="card">
+              BORROWERS <i class="fas fa-user-alt"></i> <br /><span id="count"
+                >0</span
+              >
+            </div>
+          </div>
+          <div class="section">
+            <h3>⚠️Warnings</h3>
+            <ul id="warnings"></ul>
+          </div>
+          <!-- Dashboard Borrowers -->
+          <div class="section">
+            <h3>
+              <i style="font-size: 24px" class="fas">&#xf406;</i> Current
+              Borrowers
+            </h3>
+            <table>
+              <tr>
+                <th>Name</th>
+                <th>Equipment</th>
+                <th>Qty</th>
+                <th>Status</th>
+              </tr>
+              <tbody id="dashboardBorrowers"></tbody>
+            </table>
+          </div>
+          <!-- Dashboard Inventory -->
+          <div class="section">
+            <h3>
+              <i style="font-size: 24px" class="fas">&#xf434;</i> Equipment
+              Inventory
+            </h3>
+            <table>
+              <tr>
+                <th>Equipment</th>
+                <th>Total Qty</th>
+                <th>Available Qty</th>
+                <th>Borrowed Qty</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+              <tbody id="dashboardInventory"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- EQUIPMENT -->
+        <div id="equipment" class="hidden">
+          <!-- HEADER -->
+          <div class="inventory-header">
+            <div>
+              <h2>Inventory Management</h2>
+              <p>Track and manage sports equipment.</p>
+            </div>
+            <div class="inventory-actions">
+              <input
+                type="text"
+                placeholder="🔎︎ Search equipment..."
+                onkeyup="searchEquipment(this.value)"
+              />
+              <button class="add-btn" onclick="toggleAddForm()">
+                <i class="fas fa-plus"></i> Add Item
+              </button>
+            </div>
+          </div>
+          <!-- ADD FORM (HIDDEN) -->
+          <div class="section hidden" id="addForm">
+            <input
+              id="eqName"
+              placeholder="Equipment name(Basketball, Vollyball, etc...)"
+            />
+            <input id="eqType" placeholder="Brand(Spalding, Mikasa, etc...)" />
+            <input id="eqQty" type="number" placeholder="Total quantity" />
+            <select id="eqCondition">
+              <option>New</option>
+              <option>Good</option>
+              <option>Fair</option>
+              <option>Bad</option>
+            </select>
+            <button class="action" onclick="addEquipment()">Save Item</button>
+          </div>
+          <!-- TABLE -->
+          <div class="table-box">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Condition</th>
+                  <th>Available</th>
+                  <th>Total</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="eqTable"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- BORROW -->
+        <!-- BORROW -->
+        <div id="borrow" class="hidden">
+          <!-- HEADER -->
+          <div class="borrow-header">
+            <div>
+              <h2>Active Borrows</h2>
+              <p>Manage student loans and returns.</p>
+            </div>
+            <div class="borrow-actions">
+              <input
+                type="text"
+                placeholder="🔎︎ Search student or item..."
+                onkeyup="searchBorrowers(this.value)"
+              />
+              <button
+                onclick="
+                  document
+                    .getElementById('borrowForm')
+                    .classList.toggle('hidden')
+                "
+              >
+                + New Loan
+              </button>
+            </div>
+          </div>
+          <!-- NEW LOAN FORM -->
+          <div id="borrowForm" class="section hidden">
+            <input id="bName" placeholder="Borrowers Name" />
+            <input id="bID" placeholder="Borrowers ID" />
+            <input id="bCourse" placeholder="Purpose (PE Class / Training)" />
+            <select id="bEquip"></select>
+            <input id="bQty" type="number" placeholder="Quantity" />
+            <label>Due Date</label> <input id="bDue" type="date" />
+            <button class="action" onclick="borrow()">Save Loan</button>
+          </div>
+          <!-- TABLE -->
+          <div class="borrow-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Borrower</th>
+                  <th>Borrowers ID</th>
+                  <th>Purpose</th>
+                  <th>Equipment</th>
+                  <th>Quantity</th>
+                  <th>Status</th>
+                  <th>Date Borrowred</th>
+                  <th>Due Date</th>
+                  <th>Date Returned</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="borrowTable"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- REPORTS -->
+        <div id="reports" class="hidden">
+          <div class="section">
+            <h1>Borrower Reports</h1>
+            <label>From</label> <input type="date" id="fromDate" />
+            <label>To</label> <input type="date" id="toDate" />
+            <button class="action filter" onclick="filterReports()">
+              Filter
+            </button>
+            <button class="action reset" onclick="resetReports()">Reset</button>
+            <button class="action print" onclick="window.print()">
+              Print / PDF
+            </button>
+            <table>
+              <tr>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Equipment</th>
+                <th>No. of Equipment</th>
+                <th>Equipment Status</th>
+                <th>Borrowed</th>
+              </tr>
+              <tbody id="reportBorrowers"></tbody>
+            </table>
+          </div>
+          <!-- Reports Inventory -->
+          <div class="section">
+            <h2>Equipment Inventory Report</h2>
+            <table>
+              <tr>
+                <th>Equipment</th>
+                <th>Total Qty</th>
+                <th>Available Qty</th>
+                <th>Borrowed Qty</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+              <tbody id="reportInventory"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      let equipments = JSON.parse(localStorage.getItem("equipments")) || [];
+      let borrowers = JSON.parse(localStorage.getItem("borrowers")) || [];
+      /* DASHBOARD DATE */ function showDate() {
+        const d = new Date();
+        const options = {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        };
+        document.getElementById("todayDate").innerText =
+          "📅 " + d.toLocaleDateString(undefined, options);
+      }
+      showDate();
+      /* SAVE */ function save() {
+        localStorage.setItem("equipments", JSON.stringify(equipments));
+        localStorage.setItem("borrowers", JSON.stringify(borrowers));
+      }
+      /* NAV */ function show(id) {
+        document
+          .querySelectorAll(".main>div")
+          .forEach((d) => d.classList.add("hidden"));
+        document.getElementById(id).classList.remove("hidden");
+      }
+      /* MODE */ function toggleMode() {
+        document.body.classList.toggle("dark");
+        const dark = document.body.classList.contains("dark");
+        localStorage.setItem("mode", dark ? "dark" : "light");
+        modeIcon.className = dark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+      }
+      /* LOGOUT */ function logout() {
+        if (confirm("Logout system?")) {
+          window.location.href = "index.html";
+        }
+      }
+      /* ADD EQUIPMENT */ function addEquipment() {
+        equipments.push({
+          name: eqName.value,
+          type: eqType.value,
+          total: +eqQty.value,
+          avail: +eqQty.value,
+          condition: eqCondition.value,
+        });
+        eqName.value = eqType.value = eqQty.value = "";
+        save();
+        render();
+      }
+      /* EDIT EQUIPMENT */ function editEquipment(i) {
+        let e = equipments[i];
+        let name = prompt("Edit Name:", e.name);
+        if (!name) return;
+        let type = prompt("Edit Category:", e.type);
+        if (!type) return;
+        let total = parseInt(prompt("Edit Total:", e.total));
+        if (isNaN(total)) return alert("Invalid quantity");
+        let borrowed = e.total - e.avail;
+        if (total < borrowed) return alert("Cannot reduce below borrowed");
+        let cond = prompt("Condition (New/Good/Fair/Bad):", e.condition);
+        if (!cond) return;
+        e.name = name;
+        e.type = type;
+        e.total = total;
+        e.avail = total - borrowed;
+        e.condition = cond;
+        save();
+        render();
+      }
+      /* DELETE EQUIPMENT */ function deleteEquipment(i) {
+        let used = borrowers.some(
+          (b) => b.idx === i && b.status !== "Returned",
+        );
+        if (used) return alert("Cannot delete equipment with active borrow");
+        if (confirm("Delete this equipment?")) {
+          equipments.splice(i, 1);
+          save();
+          render();
+        }
+      }
+      /* BORROW */ function borrow() {
+        let i = bEquip.value,
+          q = +bQty.value;
+        if (q <= 0 || q > equipments[i].avail) return alert("Invalid quantity");
+        if (!bDue.value) return alert("Select due date");
+        equipments[i].avail -= q;
+        borrowers.push({
+          name: bName.value,
+          id: bID.value,
+          course: bCourse.value,
+          equip: equipments[i].name,
+          idx: i,
+          qty: q,
+          status: "Borrowed",
+          borrowed: new Date().toISOString().split("T")[0],
+          due: bDue.value,
+          returned: "—",
+        });
+        bName.value = bID.value = bCourse.value = bQty.value = bDue.value = "";
+        save();
+        render();
+      }
+      /* RETURN */ function returnItem(i) {
+        borrowers[i].status = "Returned";
+        borrowers[i].returned = new Date().toISOString().split("T")[0];
+        equipments[borrowers[i].idx].avail += borrowers[i].qty;
+        save();
+        render();
+      }
+      /* FILTER */ function filterReports() {
+        let from = fromDate.value,
+          to = toDate.value;
+        reportBorrowers.innerHTML = "";
+        borrowers
+          .filter((b) => {
+            return (!from || b.borrowed >= from) && (!to || b.borrowed <= to);
+          })
+          .forEach((b) => {
+            reportBorrowers.innerHTML += (
+              <tr>
+                {" "}
+                <td>${b.name}</td> <td>${b.id}</td> <td>${b.equip}</td>{" "}
+                <td>${b.qty}</td>{" "}
+                <td class="${b.status==='Overdue'?'overdue':b.status==='Borrowed'?'borrowed':'returned'}">
+                  {" "}
+                  ${b.status}{" "}
+                </td>{" "}
+                <td>${b.borrowed}</td>{" "}
+              </tr>
+            );
+          });
+        renderInventory();
+      }
+      /* RESET */ function resetReports() {
+        fromDate.value = toDate.value = "";
+        render();
+      }
+      /* RENDER INVENTORY */ function renderInventory() {
+        dashboardInventory.innerHTML = "";
+        reportInventory.innerHTML = "";
+        equipments.forEach((e, i) => {
+          let borrowedQty = e.total - e.avail;
+          let status =
+            e.avail === 0
+              ? "Out of Stock"
+              : e.avail <= 2
+                ? "Low Stock"
+                : "Available";
+          let row = (
+            <tr>
+              {" "}
+              <td>${e.name}</td> <td>${e.total}</td> <td>${e.avail}</td>{" "}
+              <td>${borrowedQty}</td>{" "}
+              <td class="${status==='Out of Stock'?'overdue':status==='Low Stock'?'borrowed':'returned'}">
+                ${status}
+              </td>{" "}
+              <td>
+                {" "}
+                <button class="action" onclick="editEquipment(${i})">
+                  Edit
+                </button>{" "}
+                <button class="action return" onclick="deleteEquipment(${i})">
+                  Delete
+                </button>{" "}
+              </td>{" "}
+            </tr>
+          );
+          dashboardInventory.innerHTML += row;
+          reportInventory.innerHTML += row;
+        });
+      }
+      /* RENDER EVERYTHING */ function render() {
+        eqTable.innerHTML =
+          bEquip.innerHTML =
+          borrowTable.innerHTML =
+          warnings.innerHTML =
+            "";
+        reportBorrowers.innerHTML = dashboardBorrowers.innerHTML = "";
+        let today = new Date().toISOString().split("T")[0];
+        equipments.forEach((e, i) => {
+          if (e.avail <= 2)
+            warnings.innerHTML += (
+              <li>
+                Low stock: ${e.name} (${e.avail})
+              </li>
+            );
+          eqTable.innerHTML += (
+            <tr>
+              {" "}
+              <td>${e.name}</td> <td>${e.type}</td>{" "}
+              <td>
+                <span class="badge ${e.condition.toLowerCase()}">
+                  ${e.condition}
+                </span>
+              </td>{" "}
+              <td>
+                <strong>${e.avail}</strong>
+              </td>{" "}
+              <td>${e.total}</td>{" "}
+              <td class="actions">
+                {" "}
+                <i class="fas fa-pen" onclick="editEquipment(${i})"></i>{" "}
+                <i
+                  class="fas fa-trash"
+                  onclick="deleteEquipment(${i})"
+                ></i>{" "}
+              </td>{" "}
+            </tr>
+          );
+          bEquip.innerHTML += <option value="${i}">${e.name}</option>;
+        });
+        borrowers.forEach((b, i) => {
+          let status = b.status;
+          if (status === "Borrowed" && today > b.due) {
+            status = "Overdue";
+            warnings.innerHTML += (
+              <li>
+                Overdue: ${b.name} (${b.equip})
+              </li>
+            );
+          }
+          borrowTable.innerHTML += (
+            <tr>
+              {" "}
+              <td>${b.name}</td>
+              <td>${b.id}</td>
+              <td>${b.course}</td> <td>${b.equip}</td>
+              <td>${b.qty}</td>{" "}
+              <td class="${status==='Overdue'?'overdue':status==='Borrowed'?'borrowed':'returned'}">
+                ${status}
+              </td>{" "}
+              <td>${b.borrowed}</td>
+              <td>${b.due}</td>
+              <td>${b.returned}</td>{" "}
+              <td>
+                $
+                {b.status !== "Returned" ? (
+                  <button class="action return" onclick="returnItem(${i})">
+                    Return
+                  </button>
+                ) : (
+                  "—"
+                )}
+              </td>{" "}
+            </tr>
+          );
+          dashboardBorrowers.innerHTML += (
+            <tr>
+              {" "}
+              <td>${b.name}</td> <td>${b.equip}</td> <td>${b.qty}</td>{" "}
+              <td class="${status==='Overdue'?'overdue':status==='Borrowed'?'borrowed':'returned'}">
+                ${status}
+              </td>{" "}
+            </tr>
+          );
+          reportBorrowers.innerHTML += (
+            <tr>
+              {" "}
+              <td>${b.name}</td> <td>${b.id}</td> <td>${b.equip}</td>{" "}
+              <td>${b.qty}</td>{" "}
+              <td class="${status==='Overdue'?'overdue':status==='Borrowed'?'borrowed':'returned'}">
+                ${status}
+              </td>{" "}
+              <td>${b.borrowed}</td>{" "}
+            </tr>
+          );
+        });
+        let totalT = equipments.reduce((s, e) => s + e.total, 0);
+        let availT = equipments.reduce((s, e) => s + e.avail, 0);
+        total.innerText = totalT;
+        available.innerText = availT;
+        borrowed.innerText = totalT - availT;
+        count.innerText = borrowers.length;
+        renderInventory();
+      }
+      /* SEARCH EQUIPMENT */ function searchEquipment(text) {
+        text = text.toLowerCase();
+        [...eqTable.rows].forEach((row) => {
+          row.style.display = row.innerText.toLowerCase().includes(text)
+            ? ""
+            : "none";
+        });
+      }
+      /* SEARCH BORROWERS */ function searchBorrowers(text) {
+        text = text.toLowerCase();
+        [...borrowTable.rows].forEach((row) => {
+          row.style.display = row.innerText.toLowerCase().includes(text)
+            ? ""
+            : "none";
+        });
+      } // DATE DISPLAY document.getElementById("currentDate").textContent = new Date().toDateString(); // LIGHT / DARK MODE function toggleTheme(){ document.body.classList.toggle("dark"); const icon = document.querySelector(".theme-toggle i"); icon.classList.toggle("fa-moon"); icon.classList.toggle("fa-sun"); } function toggleAddForm(){ document.getElementById("addForm").classList.toggle("hidden"); } render();
+    </script>
+  </body>
+</html>
